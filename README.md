@@ -30,7 +30,7 @@ You're reading it! The code for the project is contained in python notebook Vehi
 
 The code for this step is contained in the first code cell of the IPython notebook (or in lines # through # of the file called `some_file.py`).  
 
-I started by reading in all the `vehicle` and `non-vehicle` images. The code for this is contained in **code cell 2**. Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
+I started by reading in all the `vehicle` and `non-vehicle` images. The code for this is contained in **code cell 2**. Here is an example of randomly selected `vehicle` and `non-vehicle` classes:
 
 ![cars](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/cars.png)
 
@@ -38,10 +38,17 @@ I started by reading in all the `vehicle` and `non-vehicle` images. The code for
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
-Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
-
+Here is an example using the `YCrCb` color space and HOG parameters of `orientations=9,10,11,12`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
 
 ![alt text][image2]
+
+The code for extracting HOG features from an image is defined by the method *get_hog_features*.
+
+I also used **Spatial Binning** to retrieve some relevant features of the training data. While it could be cumbersome to include three color channels of a full resolution image, you can perform spatial binning on an image and still retain enough information to help in finding vehicles.
+
+I also explored and used **Histograms of Color** method to extract features. It helps in differentiating the images by the intensity and range of color distribution. This makes it good comparator in differentiating between car and non-car images. 
+
+
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
