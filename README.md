@@ -30,7 +30,7 @@ You're reading it! The code for the project is contained in python notebook Vehi
 
 The code for this step is contained in the first code cell of the IPython notebook (or in lines # through # of the file called `some_file.py`).  
 
-I started by reading in all the `vehicle` and `non-vehicle` images. The code for this is contained in **code cell 2**. Here is an example of randomly selected `vehicle` and `non-vehicle` classes:
+I started by reading in all the `vehicle` and `non-vehicle` images. The code for this is contained in **code cell 2**. Here is an example of randomly selected `vehicle` and `non-vehicle****` classes:
 
 ![cars](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/cars.png)
 
@@ -40,38 +40,85 @@ I then explored different color spaces and different `skimage.hog()` parameters 
 
 Here is an example using the `YCrCb` color space and HOG parameters of `orientations=9,10,11,12`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
 
-![alt text][image2]
+![Hog](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/Hog.png)
 
-The code for extracting HOG features from an image is defined by the method *get_hog_features*.
+The code for extracting HOG features from an image is defined by the method *get_hog_features* in code cell 5.
 
-I also used **Spatial Binning** to retrieve some relevant features of the training data. While it could be cumbersome to include three color channels of a full resolution image, you can perform spatial binning on an image and still retain enough information to help in finding vehicles.
+I also used **Spatial Binning** to retrieve some relevant features of the training data. While it could be cumbersome to include three color channels of a full resolution image, we can perform spatial binning on an image and still retain enough information to help in finding vehicles. The coce for extracting spatial binning features is contained in method ***bin_spatial*** in code cell 7.
+
+Here is an example of using spatial binning by using size of (32,32) on an original image of size (64,64). This results in a feature vector of length 3072.
+
+![spatial_binning](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/spatial_binning.png)
 
 I also explored and used **Histograms of Color** method to extract features. It helps in differentiating the images by the intensity and range of color distribution. This makes it good comparator in differentiating between car and non-car images. 
 
+The method **extract_features** in the code cell 10 accepts a list of image paths,  HOG parameters (as well as one of a variety of destination color spaces, to which the input image is converted), spatial dimensions, number of histogram bins and produces a flattened array of combined (Hog, Spatial and histogram) features for each image in the list.
 
+I defined all the parameters to do this extraction in code cell 11 under section titled "Feature Extraction Parameters". And then I extract all the features under section titled "Extract Features for Input Datasets" in code cell 12.
+I combine the features and use StandardScaler function to normalize the feature vector under section titled "Combine the Features" in code cell 13.
+Save/dump the scaler in pickle file to load and use later so that I don't have to run the Scale and extract the features again. This is done in code cell 14 under section titled "Dump/Save the Scaler".
+The features and labels are then shuffled and split into training and test sets in preparation to be fed to a linear support vector machine (SVM) classifier. This is done under section titled "Shuffle and Split the data in training and test & Train the Classifier" in code cell 15.
+I then save the Classifier in the pickle file for later use. This is done in code cell 16.
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of parameters and...
+I tried various combinations of parameters of Hog, Spatial Bining and Histogram of Bins. The table below documents below the 25 different parameter combinations I tested and explored.
+
+![Result](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/Parameter_Results.png)
+
+First, I explored the colorspace **YCrCb** since this is what we used in the lesson and was giving good results. The first 12 combinations are in green color because here I only used every other second car image as many of the car images were repeating in the dataset given. I kept all the HOG channels and tried different combinations of orientations, pixels per cell, cells per block and spatial size and histogram bins. Even though many of these combinations give high accuracy but when I tried on running video there were many false positives and results were not upto the mark. The best results were given for combination number 9 and 10 with orientation 9 and 12. 
+
+Then, I explored the results with other color spaces which are shown in blue color from cobination number 13 to 25 but this time using all the car images. That's why the car feature extraction is double than for those in green color. When not using the spatial binning and histogram bins (combination number 20-25) the highest accuracy came for colorspaces YCrCb and YUV. The accuracy for both the colorspaces were almost the same but training time for YCrCb is lesser. 
+
+I then further wanted to check and see if the accuracy can be improved further by using spatial binnning and histogram bins (combination number 13-19) the highest accuracy and least amount of training time came for colorspace YCrCb as compared to the other colorspaces. 
+
+And this way, I finally narrowed down to using the combination number 13. I didn't use the combination number 14 even it has better accuracy because it gave me almost the same accuracy as 13 but has higher training time, prediction time and larger feature vector.
+
+These parameters are present in code cell 11 under section titled "Feature Extraction Parameters".
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I trained a linear SVM using...
+In the section titled "Shuffle and Split the data in training and test & Train the Classifier" I trained a linear SVM with the default classifier parameters and used HOG features, spatial binning and histogram of colors feature. This was I was able to achieve a test accuracy of 99.10 %.
 
 ### Sliding Window Search
 
 #### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
+Until now, we feed a classifier with an 64 x 64 pixels image and get a result from it: car or non-car. In order to do this for an entire image (720 x 1280), we use a sliding window. I cropped the images with the area of interest in which I am hopefull of finding the car images. Then sliced the image in small frames, resized it to the right size (64x64), and applied the classification algorithm.
 
-![alt text][image3]
+In the section titled "To find cars in an image" the method **find_cars** is present in the code cell 18, which combines feature extraction with a sliding window search, but rather than performing feature extraction on each window individually which can be time consuming, the features are extracted for the region of interest. 
+
+And then these full-image features are subsampled according to the size of the window and then fed to the classifier. The method performs the classifier prediction on the combined features for each window region and returns a list of rectangle objects corresponding to the windows that generated a positive ("car") prediction.
+
+The below images shows the attempts at using find_cars on one of the test images, using a different window sizes.Since, the car can appear in different sizes. I applied different windows sizes over the image i.e. scale value of 1.1, 1.4 and 1.8. This is done in code cell 20, 21, 22.
+
+![find_cars1](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/find_cars1.png)
+
+![find_cars2](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/find_cars14.png)
+
+![find_cars3](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/find_cars18.png)
+
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+In the end, I finalised and used the following scale values.
+scales = [1.1, 1.4, 1.6, 2.0, 2.2, 2.4, 3.0]
+
+The image below shows the rectangles returned by find_cars drawn onto one of the test images in the final implementation. Notice that there are several positive predictions on each of the near-field cars, and one positive prediction on a car in the oncoming lane.
 
 ![alt text][image4]
----
+
+A true positive is usually accompanied with many positive detections, while false positives are typically accompanied by only one or two detections, a combined heatmap and threshold is used to differentiate between the two. The add_heat function increments the pixel value (referred to as "heat") of an all-black image the size of the original image at the location of each detection rectangle. Areas enclosed by more overlapping rectangles are assigned higher levels of heat. The following image is the resulting heatmap from the detections in the image above:
+
+A threshold is applied to the heatmap (in this example, with a value of 2), setting all pixels that don't exceed the threshold to zero. The result is shown below in the image.
+
+The scipy.ndimage.measurements.label() function collects spatially contiguous areas of the heatmap and assigns each a label:
+
+
+And the final detection area is set to the extremities of each identified label:
+
+The final implementation performs very well, identifying the vehicles in each of the images with no false positives.
+
 
 ### Video Implementation
 
