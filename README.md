@@ -135,7 +135,7 @@ And the final detection area we take labels image and put bounding boxes around 
 
 ![heat_threshold](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/final_box.PNG)
 
-The final implementation performs very well, identifying the vehicles in each of the images with no false positives.
+The final implementation performs well, identifying the vehicles in each of the images with no false positives.
 
 ### Video Implementation
 
@@ -145,7 +145,7 @@ Here's a [link to my video result](./project_video.mp4)
 
 #### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-I used a class Windows to store the rectangles where the cars were detected during each frame of the video using find_cars(). The code for this is contained under the section titled *"Windows Class to store the rectangles where the cars were detected during each frame"* in **code cell 34**. This class stores all the detections for each frame and keep only the last 10 frames of the video. Detections are stored in the class using add_win() and keeps only last 10 frames. Then we use these last 10 frames and perform heatmap, threshold and labels on them combined instead of doing on each frame individually. I used the threshold value for the heatmap is set to  len(win_pos). I found this value through experiments running video for different frames and checking the result.
+I used a class Windows to store the rectangles where the cars were detected during each frame of the video using find_cars(). The code for this is contained under the section titled *"Windows Class to store the rectangles where the cars were detected during each frame"* in **code cell 34**. This class stores all the detections for each frame and keep only the last 10 frames of the video. Detections are stored in the class using add_win() and keeps only last 10 frames. Then we use these last 10 frames and perform heatmap, threshold and labels on them combined instead of doing on each frame individually. I used the threshold value for the heatmap is set to `1 +  len(win_pos)//2`. I found this value through experiments running video for different frames and checking the result.
 
 The code for the pipeline processing of the image processing is contained in section titled *"Combining all together in Pipeline function to process Image"* in **code cell 35**. 
 
@@ -167,14 +167,6 @@ The ideal solution would be to have a very high accuracy classifier which makes 
 
 The pipeline is trained only to detect car and non-car images on the dataset provided which would not be sufficient to detect vehicles not present in that dataset.
 
-The pipeline can most likely fail where there are small window scales because they produce more false positives. The oncoming cars are the issue in this case and also distant cars.
+The pipeline can most likely fail where there are small window scales because they produce more false positives. The oncoming cars are the issue in this case and also distant cars. This is visible in the output video where we see the cars being detected in the lane in oncoming direction.
 
-Also, the threshold value 
-
-I think given the time, I would want to use the neural network approach to detect the cars. 
-
-
-
-
-
-
+I think given the time, I would want to use the neural network approach to detect the cars.
