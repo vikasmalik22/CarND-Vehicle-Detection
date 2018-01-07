@@ -64,7 +64,7 @@ I then save the Classifier in the pickle file for later use. This is done in cod
 
 I tried various combinations of parameters of Hog, Spatial Bining and Histogram of Bins. The table below documents below the 25 different parameter combinations I tested and explored.
 
-![Result](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/Parameter_Results.png)
+![Result](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/Parameter_Results.PNG)
 
 First, I explored the colorspace **YCrCb** since this is what we used in the lesson and was giving good results. The first 12 combinations are in green color because here I only used every other second car image as many of the car images were repeating in the dataset given. I kept all the HOG channels and tried different combinations of orientations, pixels per cell, cells per block and spatial size and histogram bins. Even though many of these combinations give high accuracy but when I tried on running video there were many false positives and results were not upto the mark. The best results were given for combination number 9 and 10 with orientation 9 and 12. 
 
@@ -88,7 +88,7 @@ Until now, we feed a classifier with an 64 x 64 pixels image and get a result fr
 
 The Image below shows the cropped Region of Interest (ROI) in YCrCb colorspace.
 
-![cropped](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/cropped.png)
+![cropped](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/cropped.PNG)
 
 Then sliced the image in small frames, resized it to the right size (64x64), and applied the classification algorithm.
 
@@ -116,19 +116,19 @@ Following is a result of combining all the different window sizes using the abov
 
 Next, I used the technique mentioned in chapter 37 on how to remove false positives from multiple detections. A true positive is usually consist of many positive detections, whereas false positives are typically accompanied by only one or two detections. a combined heatmap and threshold is used to differentiate between the two. The add_heat function simply adds +1 for all pixels within windows where a positive detection is reported by the classifier. Areas enclosed by more overlapping rectangles are assigned higher levels of heat. The following image is the resulting heatmap from the detections in the image above:
 
-![apply_heat](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/apply_heat.png)
+![apply_heat](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/apply_heat.PNG)
 
 A threshold is applied to the heatmap using value of 1, setting all pixels that don't exceed the threshold to zero. The result is shown below in the image.
 
-![heat_threshold](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/heat_threshold.png)
+![heat_threshold](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/heat_threshold.PNG)
 
 The scipy.ndimage.measurements.label() function collects spatially contiguous areas of the heatmap and assigns each a label:
 
-![heat_threshold](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/labels.png)
+![heat_threshold](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/labels.PNG)
 
 And the final detection area we take labels image and put bounding boxes around the labeled regions.:
 
-![heat_threshold](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/final_box.png)
+![heat_threshold](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/final_box.PNG)
 
 The final implementation performs very well, identifying the vehicles in each of the images with no false positives.
 
