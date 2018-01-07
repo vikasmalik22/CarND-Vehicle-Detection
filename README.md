@@ -69,7 +69,7 @@ I tried various combinations of parameters of Hog, Spatial Bining and Histogram 
 
 ![Result](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/Parameter_Results.PNG)
 
-First, I explored the colorspace **YCrCb** since this is what we used in the lesson and was giving good results. The first 12 combinations are in green color because here I only used every other second car image as many of the car images were repeating in the dataset given. I kept all the HOG channels and tried different combinations of orientations, pixels per cell, cells per block and spatial size and histogram bins. Even though many of these combinations give high accuracy but when I tried on running video there were many false positives and results were not upto the mark. The best results were given for c*ombination number 9 and 10 with orientation 9 and 12*. 
+First, I explored the colorspace **YCrCb** since this is what we used in the lesson and was giving good results. The first 12 combinations are in green color because here I only used every other second car image as many of the car images were repeating in the dataset given. I kept all the HOG channels and tried different combinations of orientations, pixels per cell, cells per block and spatial size and histogram bins. Even though many of these combinations give high accuracy but when I tried on running video there were many false positives and results were not upto the mark. *The best results were given for combination number 9 and 10 with orientation 9 and 12*. 
 
 Then, I explored the results with other color spaces which are shown in blue color from cobination number 13 to 25 but this time using all the car images. That's why the car feature extraction is double than for those in green color. When not using the spatial binning and histogram bins (combination number 20-25) the highest accuracy came for colorspaces **YCrCb and YUV**. The accuracy for both the colorspaces were almost the same but training time for **YCrCb** is lesser. 
 
@@ -77,11 +77,11 @@ I then further wanted to check and see if the accuracy can be improved further b
 
 And this way, I finally narrowed down to using the **combination number 13**. I didn't use the combination number 14 even it has better accuracy because it gave me almost the same accuracy as 13 but has higher training time, prediction time and larger feature vector.
 
-These parameters are present in **code cell 11** under section titled *"Feature Extraction Parameters".*
+These parameters are present in **code cell 11** under section titled *"Feature Extraction Parameters"*.
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-In the section titled "Shuffle and Split the data in training and test & Train the Classifier" I trained a linear SVM with the default classifier parameters and used HOG features, spatial binning and histogram of colors feature. This was I was able to achieve a test accuracy of 99.10 %.
+In the section titled *"Shuffle and Split the data in training and test & Train the Classifier"* I trained a linear SVM with the default classifier parameters and used HOG features, spatial binning and histogram of colors feature. This was I was able to achieve a test accuracy of 99.10 %.
 
 ### Sliding Window Search
 
@@ -135,13 +135,12 @@ And the final detection area we take labels image and put bounding boxes around 
 
 ![heat_threshold](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/final_box.PNG)
 
-The final implementation performs well, identifying the vehicles in each of the images with no false positives.
+The final implementation performs well, identifying the vehicles in each of the images but detecting some cars from the oncoming lane.
 
 ### Video Implementation
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
-Here's a [link to my video result](./project_video.mp4)
-
+Here's a [link to my video result](https://youtu.be/mW005zKKpvM)
 
 #### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
@@ -168,5 +167,7 @@ The ideal solution would be to have a very high accuracy classifier which makes 
 The pipeline is trained only to detect car and non-car images on the dataset provided which would not be sufficient to detect vehicles not present in that dataset.
 
 The pipeline can most likely fail where there are small window scales because they produce more false positives. The oncoming cars are the issue in this case and also distant cars. This is visible in the output video where we see the cars being detected in the lane in oncoming direction.
+
+Also, since the pipeline to process the images is optimized for this track, it might fail to detect cars properly in other tracks. Need to check on this.
 
 I think given the time, I would want to use the neural network approach to detect the cars.
