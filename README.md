@@ -28,9 +28,8 @@ You're reading it! The code for the project is contained in python notebook Vehi
 
 #### 1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
-The code for this step is contained in the first code cell of the IPython notebook (or in lines # through # of the file called `some_file.py`).  
-
-I started by reading in all the `vehicle` and `non-vehicle` images. The code for this is contained in **code cell 2**. Here is an example of randomly selected `vehicle` and `non-vehicle****` classes:
+I started by reading in all the `vehicle` and `non-vehicle` images. The code for this is contained in **code cell 2**. I used only GTI vehicle image database and the KITTI vision benchmark suite dataset.
+Here is an example of randomly selected `vehicle` and `non-vehicle` classes:
 
 ![cars](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/cars.png)
 
@@ -44,7 +43,7 @@ Here is an example using the `YCrCb` color space and HOG parameters of `orientat
 
 The code for extracting HOG features from an image is defined by the method *get_hog_features* in code cell 5.
 
-I also used **Spatial Binning** to retrieve some relevant features of the training data. While it could be cumbersome to include three color channels of a full resolution image, we can perform spatial binning on an image and still retain enough information to help in finding vehicles. The coce for extracting spatial binning features is contained in method ***bin_spatial*** in code cell 7.
+Relevant features of the training data. While it could be cumbersome to include three color channels of a full resolution image, we can perform spatial binning on an image and still retain enough information to help in finding vehicles. The coce for extracting spatial binning features is contained in method ***bin_spatial*** in code cell 7.
 
 Here is an example of using spatial binning by using size of (32,32) on an original image of size (64,64). This results in a feature vector of length 3072.
 
@@ -55,9 +54,13 @@ I also explored and used **Histograms of Color** method to extract features. It 
 The method **extract_features** in the code cell 10 accepts a list of image paths,  HOG parameters (as well as one of a variety of destination color spaces, to which the input image is converted), spatial dimensions, number of histogram bins and produces a flattened array of combined (Hog, Spatial and histogram) features for each image in the list.
 
 I defined all the parameters to do this extraction in code cell 11 under section titled "Feature Extraction Parameters". And then I extract all the features under section titled "Extract Features for Input Datasets" in code cell 12.
+
 I combine the features and use StandardScaler function to normalize the feature vector under section titled "Combine the Features" in code cell 13.
+
 Save/dump the scaler in pickle file to load and use later so that I don't have to run the Scale and extract the features again. This is done in code cell 14 under section titled "Dump/Save the Scaler".
+
 The features and labels are then shuffled and split into training and test sets in preparation to be fed to a linear support vector machine (SVM) classifier. This is done under section titled "Shuffle and Split the data in training and test & Train the Classifier" in code cell 15.
+
 I then save the Classifier in the pickle file for later use. This is done in code cell 16.
 
 #### 2. Explain how you settled on your final choice of HOG parameters.
