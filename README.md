@@ -84,13 +84,19 @@ In the section titled "Shuffle and Split the data in training and test & Train t
 
 #### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-Until now, we feed a classifier with an 64 x 64 pixels image and get a result from it: car or non-car. In order to do this for an entire image (720 x 1280), we use a sliding window. I cropped the images with the area of interest in which I am hopefull of finding the car images. Then sliced the image in small frames, resized it to the right size (64x64), and applied the classification algorithm.
+Until now, we feed a classifier with an 64 x 64 pixels image and get a result from it: car or non-car. In order to do this for an entire image (720 x 1280), we use a sliding window. I cropped the images with the area of interest in which I am hopefull of finding the car images. 
 
-In the section titled "To find cars in an image" the method **find_cars** is present in the code cell 18, which combines feature extraction with a sliding window search, but rather than performing feature extraction on each window individually which can be time consuming, the features are extracted for the region of interest. 
+The Image below shows the cropped Region of Interest (ROI) in YCrCb colorspace.
+
+![cropped](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/cropped.png)
+
+Then sliced the image in small frames, resized it to the right size (64x64), and applied the classification algorithm.
+
+In the section titled "To find cars in an image" the method **find_cars** is present in the code cell 18, which combines feature extraction with a sliding window search, but rather than performing feature extraction on each window individually which can be time consuming, the features are extracted for the ROI.
 
 And then these full-image features are subsampled according to the size of the window and then fed to the classifier. The method performs the classifier prediction on the combined features for each window region and returns a list of rectangle objects corresponding to the windows that generated a positive ("car") prediction.
 
-The below images shows the attempts at using find_cars on one of the test images, using a different window sizes.Since, the car can appear in different sizes. I applied different windows sizes over the image i.e. scale value of 1.1, 1.4 and 1.8. This is done in code cell 20, 21, 22.
+The below images shows the attempts at using find_cars on one of the test images, using a different window sizes.Since, the car can appear in different sizes. I applied different windows sizes over the image i.e. scale value of 1.1, 1.4 and 1.6. This is done in code cell 20, 21, 22.
 
 ![find_cars1](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/find_cars1.png)
 
@@ -104,21 +110,27 @@ The below images shows the attempts at using find_cars on one of the test images
 In the end, I finalised and used the following scale values.
 scales = [1.1, 1.4, 1.6, 2.0, 2.2, 2.4, 3.0]
 
-The image below shows the rectangles returned by find_cars drawn onto one of the test images in the final implementation. Notice that there are several positive predictions on each of the near-field cars, and one positive prediction on a car in the oncoming lane.
+Following is a result of combining all the different window sizes using the above scale values.
 
-![alt text][image4]
+![find_carsfinal](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/find_cars_final.png)
 
-A true positive is usually accompanied with many positive detections, while false positives are typically accompanied by only one or two detections, a combined heatmap and threshold is used to differentiate between the two. The add_heat function increments the pixel value (referred to as "heat") of an all-black image the size of the original image at the location of each detection rectangle. Areas enclosed by more overlapping rectangles are assigned higher levels of heat. The following image is the resulting heatmap from the detections in the image above:
+Next, I used the technique mentioned in chapter 37 on how to remove false positives from multiple detections. A true positive is usually consist of many positive detections, whereas false positives are typically accompanied by only one or two detections. a combined heatmap and threshold is used to differentiate between the two. The add_heat function simply adds +1 for all pixels within windows where a positive detection is reported by the classifier. Areas enclosed by more overlapping rectangles are assigned higher levels of heat. The following image is the resulting heatmap from the detections in the image above:
 
-A threshold is applied to the heatmap (in this example, with a value of 2), setting all pixels that don't exceed the threshold to zero. The result is shown below in the image.
+![apply_heat](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/apply_heat.png)
+
+A threshold is applied to the heatmap using value of 1, setting all pixels that don't exceed the threshold to zero. The result is shown below in the image.
+
+![heat_threshold](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/heat_threshold.png)
 
 The scipy.ndimage.measurements.label() function collects spatially contiguous areas of the heatmap and assigns each a label:
 
+![heat_threshold](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/labels.png)
 
-And the final detection area is set to the extremities of each identified label:
+And the final detection area we take labels image and put bounding boxes around the labeled regions.:
+
+![heat_threshold](https://github.com/vikasmalik22/CarND-Vehicle-Detection/blob/master/output_images/final_box.png)
 
 The final implementation performs very well, identifying the vehicles in each of the images with no false positives.
-
 
 ### Video Implementation
 
