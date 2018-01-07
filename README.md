@@ -140,29 +140,32 @@ Here's a [link to my video result](./project_video.mp4)
 
 #### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
+I used a class Windows to store the rectangles where the cars were detected during each frame of the video using find_cars(). The code for this is contained under the section titled "Windows Class to store the rectangles where the cars were detected during each frame". This class stores all the detections for each frame and keep only the last 10 frames of the video. Detections are stored in the class using add_win() and keeps only last 10 frames. Then we use these last 10 frames and perform heatmap, threshold and labels on them combined instead of doing on each frame individually. I used the threshold value for the heatmap is set to 1 + len(win_pos)//2. I found this value through experiments running video for few frames and checking the result.
 
-Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
+The code for the pipeline processing of the image processing is contained in section titled "Combining all together in Pipeline function to process Image". 
 
-### Here are six frames and their corresponding heatmaps:
-
-![alt text][image5]
-
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-![alt text][image6]
-
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
-
-
-
----
+Additionally, I also created a heatmap of the frames which is combined together with the final output and the code for the same is contained in the same section.
 
 ### Discussion
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.
+
+The main problem was to find the classifier with apporpriate parameters which have good detection accuracy. It took some time to find the right parameters for the classifier which have high accuracy and also takes least execution time. I found the combination of HOG, spatial binning and Histogram of colors give good and accurate results.
+
+The sliding window method is expensive, it took 13-14 mins to process video of 50 seconds. For a real-time application, we need an optimized solution like parallel processing.
+
+The ideal solution would be to have a very high accuracy classifier which makes prediction in no time and without the need to use previous detections. This kind of real-time solution would require large computing power and parallel processing.
+
+The pipeline is trained only to detect car and non-car images on the dataset provided which would not be sufficient to detect vehicles not present in that dataset.
+
+The pipeline can most likely fail where there are small window scales because they produce more false positives. The oncoming cars are the issue in this case and also distant cars.
+
+I think given the time, I would want to use the neural network approach to detect the cars. 
+
+
+
 
 
 
